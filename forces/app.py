@@ -112,10 +112,10 @@ while running:
         screen.blit(tip, (400-120, 400))
 
     else:  # running mode
-        rightforce = sliders[0].get_value()
-        leftforce = sliders[1].get_value()
-        upforce = sliders[2].get_value()
-        downforce = sliders[3].get_value()
+        rightforce = round(sliders[0].get_value(), 1)
+        leftforce = round(sliders[1].get_value(), 1)
+        upforce = round(sliders[2].get_value(), 1)
+        downforce = round(sliders[3].get_value(), 1)
 
         obj.update(rightforce, leftforce, upforce, downforce)
         obj.draw(screen)
