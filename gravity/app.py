@@ -6,6 +6,8 @@ clock = pygame.time.Clock()
 running = True
 
 mode = 'setting'
+bg = None  # background image
+selected_planet = None  # store clicked planet name
 
 
 class Planet:
@@ -15,7 +17,7 @@ class Planet:
         self.y = y
         self.image = pygame.image.load(image_path)
         self.rect = self.image.get_rect(topleft=(x, y))  # clickable area
-    
+
     def draw(self, surface):
         surface.blit(self.image, (self.x, self.y))
 
@@ -32,8 +34,6 @@ neptune = Planet('neptune', 720, 100, 'gravity/planets/icon/neptune.png')
 
 planets = [mercury, venus, earth, mars, jupiter, saturn, uranus, neptune]
 
-planet = None
-
 while running:
     # ---- handle events ----
     for event in pygame.event.get():
@@ -44,15 +44,16 @@ while running:
             mx, my = event.pos
             for p in planets:
                 if p.rect.collidepoint(mx, my):
-                    planet = p.name
-                    print("Selected:", planet)
+                    selected_planet = p.name
+                    print("Selected:", selected_planet)
+                    # load background once and scale it to screen
+                    bg = pygame.image.load(f'gravity/planets/surface/{selected_planet}.jpg')
+                    bg = pygame.transform.scale(bg, (800, 600))
                     mode = 'running'
 
     # ---- drawing ----
-    screen.fill((0, 0, 0))
-
     if mode == 'setting':
-        # Draw planets
+        screen.fill((0, 0, 0))
         for p in planets:
             p.draw(screen)
 
@@ -60,13 +61,11 @@ while running:
         tip = font.render("Press on any planet to start", True, (255, 255, 255))
         screen.blit(tip, (400 - tip.get_width() // 2, 400))
 
-    else:  # running mode
-        for i in planets:
-            match i:
-                case 'mercury':
-                    bg = pygame.image.load(f'gravity/planets/surface/{i}.jpg')
-                    screen.blit(bg, (0, 0))
+    elif mode == 'running':
+        if bg:
+            screen.blit(bg, (0, 0))
 
     pygame.display.flip()
     clock.tick(60)
+
 pygame.quit()
